@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:concordion="http://www.concordion.org/2007/concordion">
+<head>
+    <title>MeetBot</title>
+</head>
+<body>
+
+<h1>1st Iteration</h1>
+
+<p>The system can receive calendar invites, mail participants for opinions, then pass the result to the organiser.</p>
+<div class="example">
+    <p>If <span concordion:set="#organiser">Niall</span> invited some people (<span concordion:set="#participants">David, Manoj, Robert, Venu</span>) to a meeting from <span concordion:set="#from">2015-05-21T10:30:00</span> to <span concordion:set="#to">2015-05-21T10:00:00</span> about the upcoming <span concordion:set="#subject">Release</span>. It would be <span concordion:execute="addMeeting(#organiser,#participants,#subject,#from,#to)">saved</span> in the system.</p>
+    <p>When the <span concordion:execute="checkForFinishedMeetings()">meeting finishes</span>, the system would send these mails;
+        <table concordion:verifyRows="#email : getSentMails()">
+            <tr><th concordion:assertEquals="#email.to">To</th><th concordion:assertEquals="#email.subject">Subject</th><th concordion:assertEquals="#email.body">Body</th></tr>
+            <tr><td>David</td><td>Please rate Niall's meeting!</td><td>How was Niall's meeting?</td></tr>
+            <tr><td>Manoj</td><td>Please rate Niall's meeting!</td><td>How was Niall's meeting?</td></tr>
+            <tr><td>Robert</td><td>Please rate Niall's meeting!</td><td>How was Niall's meeting?</td></tr>
+            <tr><td>Venu</td><td>Please rate Niall's meeting!</td><td>How was Niall's meeting?</td></tr>
+        </table>
+    </p>
+    <p>If people responded like this;
+        <table concordion:execute="returnResponse(#participant, #response)">
+            <tr><th concordion:set="#participant">Participant</th><th concordion:set="#response">Response</th></tr>
+            <tr><td>David</td><td>Bad</td></tr>
+            <tr><td>Venu</td><td>Good</td></tr>
+            <tr><td>Robert</td><td>Good</td></tr>
+            <tr><td>Manoj</td><td>Good</td></tr>
+        </table>
+    Then Niall would receive an email like this;
+        <table concordion:verifyRows="#email : getSentMails()">
+            <tr><th concordion:assertEquals="#email.to">To</th><th concordion:assertEquals="#email.subject">Subject</th><th concordion:assertEquals="#email.body">Body</th></tr>
+            <tr><td>Niall</td><td>Here's your rating!</td><td>You had a 75.0% success rate.</td></tr>
+        </table>
+    </p>
+</div>
+</body>
+</html>
